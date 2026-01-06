@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "git-wizard"
+version = "0.1.0"
+description = "A simple CLI tool to automate Git setup, GitHub repo creation, and SSH configuration."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "GPL-3.0"}
+dependencies = [
+  "typer[all]",
+  "rich"
+]
+
+[project.scripts]
+gset = "gset.main:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
