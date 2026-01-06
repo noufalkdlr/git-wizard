@@ -34,6 +34,9 @@ def config():
         run_git_command(["git", "config", "--global", "user.name", name])
         run_git_command(["git", "config", "--global", "user.email", email])
 
+    console.print("[bold green]✅ Configuration Updated Successfully![/bold green]")
+    console.print("[dim]Current Global Config:[/dim]")
+
     current_config = run_git_command(["git", "config", "--global", "--list"])
     console.print(f"[cyan]{current_config}[/cyan]")
 
