@@ -1,5 +1,5 @@
 
-# Git Wizard (gset) 🧙‍♂️
+# Git Wizard (gitw) 🧙‍♂️
 
 A simple CLI tool to automate Git setup and streamline everyday version control tasks.
 
@@ -45,19 +45,19 @@ If you want to contribute or modify the code:
 ### 1. Help Command
 View all available commands and options:
 ```bash
-gset --help
+gitw --help
 ```
 
 ### 2. Configure Git (Global)
 Set up your global git user.name and user.email interactively:
 ```bash
-gset config
+gitw config
 ```
 
 ### 3. Push Changes
 Stage all files, commit, and push in one go:
 ```bash
-gset push
+gitw push
 ```
 
 
