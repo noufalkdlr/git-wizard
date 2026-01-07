@@ -59,6 +59,7 @@ def push():
     with console.status("[bold green]Processing...[/bold green]"):
         run_git_command(["git", "add", "."])
         run_git_command(["git", "commit", "-m", commit_message])
+    try:
         result = subprocess.run(["git", "push"], capture_output=True, text=True)
         if result.returncode != 0:
             console.print("[bold red]Push Failed![/bold red]")
@@ -76,7 +77,9 @@ def push():
 
             raise typer.Exit(code=1)
 
-    console.print("[bold green]✅ Successfully pushed to github[/bold green]")
+        console.print("[bold green]✅ Successfully pushed to github[/bold green]")
+    except subprocess.CalledProcessError as e:
+        console.print(f"[bold red]Error:[/bold red] {e.stderr}")
 
 
 if __name__ == "__main__":
