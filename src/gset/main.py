@@ -1,6 +1,5 @@
 import typer
 import subprocess
-from rich import print
 from rich.console import Console
 
 
