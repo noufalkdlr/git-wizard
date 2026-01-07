@@ -61,7 +61,8 @@ def push():
         run_git_command(["git", "commit", "-m", commit_message])
 
     try:
-        result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        with console.status("[bold green]Processing...[/bold green]"):
+            result = subprocess.run(["git", "push"], capture_output=True, text=True)
         if result.returncode != 0:
             console.print("[bold red]Push Failed![/bold red]")
             console.print(f"[red]{result.stderr.strip()}[/red]")
