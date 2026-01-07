@@ -56,6 +56,7 @@ def push():
         raise typer.Exit()
 
     commit_message = typer.prompt("Enter commit message")
+
     with console.status("[bold green]Processing...[/bold green]"):
         run_git_command(["git", "add", "."])
         run_git_command(["git", "commit", "-m", commit_message])
