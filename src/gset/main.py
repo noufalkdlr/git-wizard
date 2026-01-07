@@ -44,9 +44,13 @@ def config():
 @app.command()
 def push():
     """
-    Push changes (Dummy for now)
+    Push current directory changes to github
     """
-    print("Push command coming soon!")
+    commit_message = typer.prompt("Enter commit message")
+    with console.status("[bold green]Pusing to github...[/bold green]"):
+        run_git_command(["git", "add", "."])
+        run_git_command(["git", "commit", "-m", commit_message])
+    console.print("[bold green]✅ Successfully pushed to github[/bold green]")
 
 
 if __name__ == "__main__":
