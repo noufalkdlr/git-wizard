@@ -50,6 +50,7 @@ def push():
     with console.status("[bold green]Pusing to github...[/bold green]"):
         run_git_command(["git", "add", "."])
         run_git_command(["git", "commit", "-m", commit_message])
+        run_git_command(["git", "push"])
     console.print("[bold green]✅ Successfully pushed to github[/bold green]")
 
 
