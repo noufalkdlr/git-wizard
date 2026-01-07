@@ -1,3 +1,4 @@
+import re
 import typer
 import subprocess
 from rich import print
@@ -44,13 +45,37 @@ def config():
 @app.command()
 def push():
     """
-    Push current directory changes to github
+    Push current directory changes to GitHub.
+    Handles empty commits and push errors gracefully.
     """
+
+    status = run_git_command(["git", "status", "--porcelain"])
+
+    if not status:
+        console.print("[yellow]Nothing to commit, working tree clean.[/yellow]")
+        raise typer.Exit()
+
     commit_message = typer.prompt("Enter commit message")
-    with console.status("[bold green]Pusing to github...[/bold green]"):
+    with console.status("[bold green]Processing...[/bold green]"):
         run_git_command(["git", "add", "."])
         run_git_command(["git", "commit", "-m", commit_message])
-        run_git_command(["git", "push"])
+        result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if result.returncode != 0:
+            console.print("[bold red]Push Failed![/bold red]")
+            console.print(f"[red]{result.stderr}[/red]")
+
+            if "updates were rejected" in result.stderr.strip():
+                console.print(
+                    "[yellow]Hint: Try pulling changes first using 'git pull'[/yellow]"
+                )
+
+            elif "no upstream" in result.stderr.lower():
+                console.print(
+                    "[yellow]Hint: No remote branch. Try 'git push --set-upstream origin main'[/yellow]"
+                )
+
+            raise typer.Exit(code=1)
+
     console.print("[bold green]✅ Successfully pushed to github[/bold green]")
 
 
