@@ -11,7 +11,6 @@ console = Console()
 def run_git_command(command: list):
     try:
         result = subprocess.run(command, check=True, capture_output=True, text=True)
-        console.print(f"hello {result.stdout}")
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         console.print(
