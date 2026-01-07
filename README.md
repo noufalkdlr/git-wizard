@@ -60,14 +60,8 @@ Stage all files, commit, and push in one go:
 gset push
 ```
 
-## 🗺️ Roadmap
-
-- [x] Global Configuration (`config`)
-- [x] Smart Push (`push`)
-- [ ] Create Remote Repo (`create`) - *Coming Soon*
-- [ ] SSH Key Setup (`ssh`) - *Coming Soon*
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the GNU General Public License v3.0 (GPLv3). See the [LICENSE](LICENSE) file for details.
 
