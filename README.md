@@ -15,7 +15,7 @@ A simple CLI tool to automate Git setup and streamline everyday version control 
 
 ## 📦 Installation
 
-You can install `gset` directly from GitHub using pip:
+You can install `git-wizart` directly from GitHub using pip:
 
 ```bash
 pip install git+https://github.com/yourusername/git-wizard.git
