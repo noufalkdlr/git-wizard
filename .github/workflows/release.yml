@@ -47,8 +47,9 @@ jobs:
             -n git-wizard \
             -v $VERSION \
             --architecture amd64 \
-            --maintainer "Noufal <your-email@example.com>" \
+            --maintainer "Noufal <noufalkakdlr@gmail.com>" \
             --description "A simple CLI tool to automate Git setup" \
+            -d "git" \
             -p dist-packages/git-wizard_${VERSION}_amd64.deb \
             dist/gitw=/usr/bin/gitw
 
@@ -60,6 +61,7 @@ jobs:
             --architecture x86_64 \
             --maintainer "Noufal <noufalkakdlr@gmail.com>" \
             --description "A simple CLI tool to automate Git setup" \
+            -d "git" \
             -p dist-packages/git-wizard-${VERSION}-1.x86_64.rpm \
             dist/gitw=/usr/bin/gitw
 
