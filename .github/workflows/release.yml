@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install . 
+          pip install pyinstaller
+
+      - name: Install FPM (For Packaging)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+
+      - name: Build Binary with PyInstaller
+        run: |
+          pyinstaller --onefile --name gitw src/gitw/main.py
+
+      - name: Package Deb and RPM
+        run: |
+          mkdir -p dist-packages
+          VERSION=${GITHUB_REF#refs/tags/v}
+
+          # Create .deb file
+          fpm -s dir -t deb \
+            -n git-wizard \
+            -v $VERSION \
+            --architecture amd64 \
+            --maintainer "Noufal <your-email@example.com>" \
+            --description "A simple CLI tool to automate Git setup" \
+            --prefix /usr/bin \
+            dist/gitw=/usr/bin/gitw \
+            -p dist-packages/git-wizard_${VERSION}_amd64.deb
+
+          # Create .rpm file
+          fpm -s dir -t rpm \
+            -n git-wizard \
+            -v $VERSION \
+            --architecture x86_64 \
+            --maintainer "Noufal <your-email@example.com>" \
+            --description "A simple CLI tool to automate Git setup" \
+            --prefix /usr/bin \
+            dist/gitw=/usr/bin/gitw \
+            -p dist-packages/git-wizard-${VERSION}-1.x86_64.rpm
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist-packages/*.deb
+            dist-packages/*.rpm
+            dist/gitw
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
