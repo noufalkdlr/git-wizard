@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-gset = "gset.main:app"
+gitw = "gitw.main:app"
 
 [tool.setuptools.packages.find]
 where = ["src"]
