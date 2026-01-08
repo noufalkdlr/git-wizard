@@ -23,14 +23,20 @@ pip install git-wizard
 ```
 
 ### AUR (Arch Linux)
+
 Install from the AUR using `yay`:
 ```bash
 yay -S git-wizard
 ```
 
+### Debian/Ubuntu (.deb)
 
+Download the latest `.deb` release from the [Releases page](https://github.com/noufalkdlr/git-wizard/releases).
+```bash
+sudo dpkg -i git-wizard_*.deb
+sudo apt-get install -f # To fix any missing dependencies
 ```
-```
+
 ### For Development (Editable Install)
 
 If you want to contribute or modify the code:
