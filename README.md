@@ -33,15 +33,14 @@ yay -S git-wizard
 
 Download the latest `.deb` release from the [Releases page](https://github.com/noufalkdlr/git-wizard/releases).
 ```bash
-sudo dpkg -i git-wizard_*.deb
-sudo apt-get install -f # To fix any missing dependencies
+sudo apt install ./git-wizard_*.deb
 ```
 
 ### Fedora/RedHat (.rpm)
 
 Download the latest `.rpm` release from the [Releases page](https://github.com/noufalkdlr/git-wizard/releases).
 ```bash
-sudo rpm -i git-wizard-*.rpm
+sudo dnf install ./git-wizard-*.rpm
 ```
 
 ### For Development (Editable Install)
