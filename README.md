@@ -50,7 +50,7 @@ If you want to contribute or modify the code:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/git-wizard.git
+   git clone https://github.com/noufalkdlr/git-wizard.git
    cd git-wizard
    ```
 
