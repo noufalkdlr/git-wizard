@@ -37,6 +37,13 @@ sudo dpkg -i git-wizard_*.deb
 sudo apt-get install -f # To fix any missing dependencies
 ```
 
+### Fedora/RedHat (.rpm)
+
+Download the latest `.rpm` release from the [Releases page](https://github.com/noufalkdlr/git-wizard/releases).
+```bash
+sudo rpm -i git-wizard-*.rpm
+```
+
 ### For Development (Editable Install)
 
 If you want to contribute or modify the code:
