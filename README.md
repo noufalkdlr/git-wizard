@@ -15,13 +15,12 @@ A simple CLI tool to automate Git setup and streamline everyday version control 
 
 ## 📦 Installation
 
-You can install `git-wizard` directly from GitHub using pip:
+### PyPI
+
+You can install `git-wizard` directly from PyPI using pip:
 
 ```bash
-pip install git+https://github.com/yourusername/git-wizard.git
-```
-
-> **Note:** Replace `yourusername` with your actual GitHub username.
+pip install git-wizard
 
 ### For Development (Editable Install)
 
