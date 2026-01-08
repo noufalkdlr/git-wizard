@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install . 
+          pip install .
           pip install pyinstaller
 
       - name: Install FPM (For Packaging)
