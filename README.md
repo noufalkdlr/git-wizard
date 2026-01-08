@@ -18,10 +18,19 @@ A simple CLI tool to automate Git setup and streamline everyday version control 
 ### PyPI
 
 You can install `git-wizard` directly from PyPI using pip:
-
 ```bash
 pip install git-wizard
+```
 
+### AUR (Arch Linux)
+Install from the AUR using `yay`:
+```bash
+yay -S git-wizard
+```
+
+
+```
+```
 ### For Development (Editable Install)
 
 If you want to contribute or modify the code:
