@@ -7,5 +7,3 @@ RUN pacman-key --init \
   && pacman -Syu --noconfirm \
   && pacman -S git github-cli python python-pip --noconfirm \
   && pacman -Scc --noconfirm
-
-CMD pip install -e . && /bin/bash
