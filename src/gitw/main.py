@@ -93,6 +93,7 @@ def connect():
         result = run_git_command(["gh", "api", "user", "-q", ".login"])
         return result
 
+    username = None
     if find_username():
         username = find_username()
         console.print(username)
