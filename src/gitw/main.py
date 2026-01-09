@@ -89,6 +89,14 @@ def connect():
     connect new created repo to local directory
     """
 
+    def find_username():
+        result = run_git_command(["gh", "api", "user", "-q", ".login"])
+        return result
+
+    if find_username():
+        username = find_username()
+        console.print(username)
+
 
 if __name__ == "__main__":
     app()
