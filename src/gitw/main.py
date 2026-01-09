@@ -83,5 +83,12 @@ def push():
         console.print(f"[bold red]Error:[/bold red] {e.stderr}")
 
 
+@app.command()
+def connect():
+    """
+    connect new created repo to local directory
+    """
+
+
 if __name__ == "__main__":
     app()
