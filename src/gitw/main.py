@@ -88,15 +88,24 @@ def connect():
     """
     connect new created repo to local directory
     """
+    username = None
+    remote = None
 
     def find_username():
         result = run_git_command(["gh", "api", "user", "-q", ".login"])
         return result
 
-    username = None
+    def find_remote():
+        result = subprocess.run(
+            ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+
     if find_username():
         username = find_username()
-        console.print(username)
+    remote = find_remote()
+    repo_name = typer.prompt("Enter repo name")
 
 
 if __name__ == "__main__":
