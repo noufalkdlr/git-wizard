@@ -92,9 +92,19 @@ def connect():
 
     def find_username():
         try:
-            result = run_git_command(["gh", "api", "user", "-q", ".login"])
-            return result
+            result = subprocess.run(
+                ["gh", "api", "user", "-q", ".login"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            if result.returncode == 0:
+                return result.stdout.strip()
         except FileNotFoundError:
+            return None
+        except subprocess.CalledProcessError as e:
+            print("gh installed. Not login")
+            print(e.stderr)
             return None
 
     def find_remote():
@@ -103,8 +113,13 @@ def connect():
                 ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
             )
             if result.returncode == 0:
+                print("finttttt")
                 return result.stdout.strip()
         except FileNotFoundError:
+            return None
+        except subprocess.CalledProcessError as e:
+            print("gh installed. Not login (remote)")
+            print(e.stderr)
             return None
 
     if find_remote():
@@ -126,7 +141,6 @@ def connect():
     if find_username():
         username = find_username()
     else:
-        print("gh not installed")
         username = typer.prompt("Enter username")
 
     repo_name = typer.prompt("Enter repo name")
