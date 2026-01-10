@@ -105,7 +105,22 @@ def connect():
     if find_username():
         username = find_username()
     remote = find_remote()
+
+    if not find_username():
+        username = typer.prompt("Enter username")
     repo_name = typer.prompt("Enter repo name")
+
+    run_git_command(["git", "init"])
+    run_git_command(["git", "add", "."])
+    run_git_command(["git", "commit", "-m", "first commit"])
+    run_git_command(["git", "branch", "-M", "main"])
+    if remote == "https":
+        https = f"https://github.com/{username}/{repo_name}.git"
+        run_git_command(["git", "remote", "add", "origin", https])
+    elif remote == "ssh":
+        ssh = f"git@github.com:{username}/{repo_name}.git"
+        run_git_command(["git", "remote", "add", "origin", ssh])
+    run_git_command(["git", "push", "-u", "origin", "main"])
 
 
 if __name__ == "__main__":
