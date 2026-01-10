@@ -102,10 +102,29 @@ def connect():
                 return result.stdout.strip()
         except FileNotFoundError:
             return None
-        except subprocess.CalledProcessError as e:
-            print("gh installed. Not login")
-            print(e.stderr)
-            return None
+        except subprocess.CalledProcessError:
+            while True:
+                try:
+                    choice = typer.prompt("Do you want to setup github cli? (y/n)")
+                    if choice in ["y", "yes"]:
+                        try:
+                            result = subprocess.run(["gh", "auth", "login"])
+                            if result.returncode == 0:
+                                print("succsess fully loged in gh")
+                                break
+                            else:
+                                print(result.stderr.strip())
+                        except subprocess.CalledProcessError as e:
+                            print("afs", e.stderr)
+                            break
+                    elif choice in ["n", "no"]:
+                        print("operaton stoped")
+                        break
+                    else:
+                        print("please select y or n or ctrl + c for quit")
+                except KeyboardInterrupt:
+                    print("operation cancelld by user")
+                    return None
 
     def find_remote():
         try:
@@ -113,7 +132,6 @@ def connect():
                 ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
             )
             if result.returncode == 0:
-                print("finttttt")
                 return result.stdout.strip()
         except FileNotFoundError:
             return None
