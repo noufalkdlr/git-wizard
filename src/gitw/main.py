@@ -121,6 +121,7 @@ def connect():
         ssh = f"git@github.com:{username}/{repo_name}.git"
         run_git_command(["git", "remote", "add", "origin", ssh])
     run_git_command(["git", "push", "-u", "origin", "main"])
+    print("succsess")
 
 
 if __name__ == "__main__":
