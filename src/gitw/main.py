@@ -1,6 +1,7 @@
 import typer
 import subprocess
 from rich.console import Console
+import inquirer
 
 
 app = typer.Typer(help="Git Wizard (gset) - Simple Git Automation Tool")
@@ -88,31 +89,51 @@ def connect():
     """
     connect new created repo to local directory
     """
-    username = None
-    remote = None
 
     def find_username():
-        result = run_git_command(["gh", "api", "user", "-q", ".login"])
-        return result
+        try:
+            result = run_git_command(["gh", "api", "user", "-q", ".login"])
+            return result
+        except FileNotFoundError:
+            return None
 
     def find_remote():
-        result = subprocess.run(
-            ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
-        )
-        if result.returncode == 0:
-            return result.stdout.strip()
+        try:
+            result = subprocess.run(
+                ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
+            )
+            if result.returncode == 0:
+                return result.stdout.strip()
+        except FileNotFoundError:
+            return None
+
+    if find_remote():
+        remote = find_remote()
+
+    else:
+        questions = [
+            inquirer.List(
+                "protocol",
+                message="Select remote protocol",
+                choices=["ssh", "http"],
+            ),
+        ]
+        answer = inquirer.prompt(questions)
+        if not answer:
+            raise typer.Exit()
+        remote = answer["protocol"]
 
     if find_username():
         username = find_username()
-    remote = find_remote()
-
-    if not find_username():
+    else:
+        print("gh not installed")
         username = typer.prompt("Enter username")
+
     repo_name = typer.prompt("Enter repo name")
 
     run_git_command(["git", "init"])
     run_git_command(["git", "add", "."])
-    run_git_command(["git", "commit", "-m", "first commit"])
+    run_git_command(["git", "commit", "-m", "'first commit'"])
     run_git_command(["git", "branch", "-M", "main"])
     if remote == "https":
         https = f"https://github.com/{username}/{repo_name}.git"
