@@ -196,27 +196,29 @@ def connect():
                     )
                     raise typer.Exit(code=1)
                 else:
-                    console.print("[bold red]❌ Failed to create commit[/bold red]")
+                    console.print("\n[bold red]❌ Failed to create commit[/bold red]")
                     if error_message:
-                        console.print(f"[bold red]{error_message}")
+                        console.print(f"[bold red]{error_message}[/bold red]")
                         raise typer.Exit(code=1)
                     if output_message:
-                        console.print(f"[bold red]{output_message}")
+                        console.print(f"[bold red]{output_message}[/bold red]")
                         raise typer.Exit(code=1)
 
             run_git_command(["git", "branch", "-M", "main"])
+
             if protocol == "https":
                 https = f"https://github.com/{username}/{repo_name}.git"
                 run_git_command(["git", "remote", "add", "origin", https])
             elif protocol == "ssh":
                 ssh = f"git@github.com:{username}/{repo_name}.git"
                 run_git_command(["git", "remote", "add", "origin", ssh])
+
             run_git_command(["git", "push", "-u", "origin", "main"])
         console.print(
             "[bold green]✅ Successfully connected and pushed to GitHub![/bold green]"
         )
     except KeyboardInterrupt:
-        console.print("Operation cancelled")
+        console.print("[yellow]Operation cancelled[/yellow]")
 
 
 if __name__ == "__main__":
