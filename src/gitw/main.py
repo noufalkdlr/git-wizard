@@ -171,7 +171,15 @@ def connect():
         with console.status("[bold green]Initializing repository...[/bold green]"):
             run_git_command(["git", "init"])
             run_git_command(["git", "add", "."])
-            run_git_command(["git", "commit", "-m", "first commit"])
+            result = subprocess.run(
+                ["git", "commit", "-m", "first commit"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            if result.returncode != 0:
+                console.print(result.stderr.strip())
+                raise typer.Exit(code=1)
             run_git_command(["git", "branch", "-M", "main"])
             if protocol == "https":
                 https = f"https://github.com/{username}/{repo_name}.git"
