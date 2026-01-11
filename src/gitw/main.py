@@ -183,16 +183,20 @@ def connect():
                     text=True,
                 )
             except subprocess.CalledProcessError as e:
-                console.print("\n[bold red]Something went wrong[/bold red]")
-
                 error_message = e.stderr.strip() if e.stderr else ""
                 output_message = e.stdout.strip() if e.stdout else ""
 
                 if "nothing to commit" in output_message:
-                    console.print(f"[yellow]{output_message}[/yellow]")
+                    console.print("\n[yellow]⚠️  Nothing to commit[/yellow]")
+                    console.print(
+                        "[dim]Directory is empty or files are already committed[/dim]"
+                    )
+                    console.print(
+                        "[dim]Please add some files to the directory first[/dim]"
+                    )
                     raise typer.Exit(code=1)
                 else:
-                    console.print("[bold red]Failed to create commit[/bold red]")
+                    console.print("[bold red]❌ Failed to create commit[/bold red]")
                     if error_message:
                         console.print(f"[bold red]{error_message}")
                         raise typer.Exit(code=1)
