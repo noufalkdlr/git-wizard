@@ -117,7 +117,6 @@ def connect():
                     )
                     return None
             else:
-                console.print("Operation cancelled!")
                 return None
 
     def get_git_protocol():
