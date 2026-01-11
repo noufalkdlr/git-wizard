@@ -1,7 +1,6 @@
 import typer
 import subprocess
 from rich.console import Console
-from rich.panel import Panel
 import inquirer
 
 
@@ -102,15 +101,11 @@ def connect():
             if gh_result.returncode == 0:
                 return gh_result.stdout.strip()
         except FileNotFoundError:
-            message = (
-                "[yellow]⚠️  GitHub CLI is not installed[/yellow]\n\n"
-                "[dim]Installing GitHub CLI provides:[/dim]\n"
-                "  • [green]Automatic username detection[/green]\n"
-                "  • [green]Auto-configured protocol[/green]\n"
-                "  • [green]Seamless authentication[/green]\n\n"
-                "[cyan]📦 Install: https://cli.github.com[/cyan]"
+            console.print("[yellow]⚠️  GitHub CLI is not installed[/yellow]")
+            console.print(
+                "[dim]Tip: Installing GitHub CLI allows you to skip username and protocol selection[/dim]"
             )
-            console.print(Panel(message, border_style="yellow"))
+            console.print("[dim]Visit: https://cli.github.com to install[/dim]\n")
             return None
         except subprocess.CalledProcessError:
             choice = typer.confirm("Do you want to setup Github CLI?")
@@ -124,7 +119,7 @@ def connect():
                 except subprocess.CalledProcessError as e:
                     if e.stderr and e.stderr.strip():
                         console.print(
-                            f"[bold red]Error running command:[/bold red][red]{e.stderr}[/red]"
+                            f"[bold red]Error running command: [/bold red][red]{e.stderr}[/red]"
                         )
                         return None
                     console.print("[yellow]Operation cancelled by user[/yellow]")
@@ -171,15 +166,17 @@ def connect():
         with console.status("[bold green]Initializing repository...[/bold green]"):
             run_git_command(["git", "init"])
             run_git_command(["git", "add", "."])
-            result = subprocess.run(
-                ["git", "commit", "-m", "first commit"],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            if result.returncode != 0:
-                console.print(result.stderr.strip())
-                raise typer.Exit(code=1)
+            try:
+                subprocess.run(
+                    ["git", "commit", "-m", "first commit"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+            except subprocess.CalledProcessError as e:
+                console.print(
+                    f"[bold red]Somting went wrong[/bold red] [red]{e.stderr}[/red]"
+                )
             run_git_command(["git", "branch", "-M", "main"])
             if protocol == "https":
                 https = f"https://github.com/{username}/{repo_name}.git"
