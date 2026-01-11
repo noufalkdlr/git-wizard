@@ -1,6 +1,7 @@
 import typer
 import subprocess
 from rich.console import Console
+from rich.panel import Panel
 import inquirer
 
 
@@ -101,10 +102,16 @@ def connect():
             if gh_result.returncode == 0:
                 return gh_result.stdout.strip()
         except FileNotFoundError:
-            console.print("Github CLI Not installed")
-            console.print(
-                "if you intall ghthub cli you can skip username and protocol select\n"
+            message = (
+                "[yellow]⚠️  GitHub CLI is not installed[/yellow]\n\n"
+                "[dim]Installing GitHub CLI provides:[/dim]\n"
+                "  • [green]Automatic username detection[/green]\n"
+                "  • [green]Auto-configured protocol[/green]\n"
+                "  • [green]Seamless authentication[/green]\n\n"
+                "[cyan]📦 Install: https://cli.github.com[/cyan]"
             )
+            console.print(Panel(message, border_style="yellow"))
+            return None
         except subprocess.CalledProcessError:
             choice = typer.confirm("Do you want to setup Github CLI?")
             if choice:
