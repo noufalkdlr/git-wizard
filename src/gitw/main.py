@@ -1,4 +1,3 @@
-from sys import stderr, stdout
 import typer
 import subprocess
 from rich.console import Console
@@ -113,8 +112,8 @@ def connect():
 
         except subprocess.CalledProcessError:
             message = (
-                "[yellow]\n⚠️  GitHub CLI is no login[/yellow]"
-                "[dim]Tip: loog in GitHub CLI allows you to skip username and protocol selection[/dim]\n"
+                "[yellow]⚠️  GitHub CLI is not logged in[/yellow]\n"
+                "[dim]Tip: Logging in to GitHub CLI allows you to skip username and protocol selection[/dim]\n"
             )
             console.print(Panel(message, border_style="yellow"))
 
@@ -184,18 +183,22 @@ def connect():
                     text=True,
                 )
             except subprocess.CalledProcessError as e:
-                console.print(
-                    f"[bold red]Something went wrong[/bold red] [red]{e.stderr}[/red]"
-                )
-                error_message = e.stderr.strip() if stderr else ""
-                output_message = e.stdout.strip() if stdout else ""
+                console.print("\n[bold red]Something went wrong[/bold red]")
 
-                if error_message:
-                    console.print(f"[bold red]{error_message}")
+                error_message = e.stderr.strip() if e.stderr else ""
+                output_message = e.stdout.strip() if e.stdout else ""
+
+                if "nothing to commit" in output_message:
+                    console.print(f"[yellow]{output_message}[/yellow]")
                     raise typer.Exit(code=1)
-                if output_message:
-                    console.print(f"[bold red]{output_message}")
-                    raise typer.Exit(code=1)
+                else:
+                    console.print("[bold red]Failed to create commit[/bold red]")
+                    if error_message:
+                        console.print(f"[bold red]{error_message}")
+                        raise typer.Exit(code=1)
+                    if output_message:
+                        console.print(f"[bold red]{output_message}")
+                        raise typer.Exit(code=1)
 
             run_git_command(["git", "branch", "-M", "main"])
             if protocol == "https":
