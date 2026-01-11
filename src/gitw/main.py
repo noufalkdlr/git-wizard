@@ -101,7 +101,10 @@ def connect():
             if gh_result.returncode == 0:
                 return gh_result.stdout.strip()
         except FileNotFoundError:
-            return None
+            console.print("Github CLI Not installed")
+            console.print(
+                "if you intall ghthub cli you can skip username and protocol select\n"
+            )
         except subprocess.CalledProcessError:
             choice = typer.confirm("Do you want to setup Github CLI?")
             if choice:
@@ -112,9 +115,12 @@ def connect():
                     )
                     return get_github_username()
                 except subprocess.CalledProcessError as e:
-                    console.print(
-                        f"[bold red]Error running command:[/bold red] [red]{e.stderr}[/red]"
-                    )
+                    if e.stderr and e.stderr.strip():
+                        console.print(
+                            f"[bold red]Error running command:[/bold red][red]{e.stderr}[/red]"
+                        )
+                        return None
+                    console.print("[yellow]Operation cancelled by user[/yellow]")
                     return None
             else:
                 return None
