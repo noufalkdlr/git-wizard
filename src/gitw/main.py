@@ -105,7 +105,7 @@ def connect():
         except subprocess.CalledProcessError:
             while True:
                 try:
-                    choice = typer.prompt("Do you want to setup github cli? (y/n)")
+                    choice = typer.confirm("Do you want to setup github cli? (y/n)")
                     if choice in ["y", "yes"]:
                         try:
                             result = subprocess.run(["gh", "auth", "login"])
@@ -140,15 +140,13 @@ def connect():
             print(e.stderr)
             return None
 
-    if find_remote():
-        remote = find_remote()
-
-    else:
+    remote = find_remote()
+    if not remote:
         questions = [
             inquirer.List(
                 "protocol",
                 message="Select remote protocol",
-                choices=["ssh", "http"],
+                choices=["ssh", "https"],
             ),
         ]
         answer = inquirer.prompt(questions)
@@ -156,25 +154,29 @@ def connect():
             raise typer.Exit()
         remote = answer["protocol"]
 
-    if find_username():
-        username = find_username()
-    else:
+    username = find_username()
+
+    if not username:
         username = typer.prompt("Enter username")
 
     repo_name = typer.prompt("Enter repo name")
 
-    run_git_command(["git", "init"])
-    run_git_command(["git", "add", "."])
-    run_git_command(["git", "commit", "-m", "'first commit'"])
-    run_git_command(["git", "branch", "-M", "main"])
-    if remote == "https":
-        https = f"https://github.com/{username}/{repo_name}.git"
-        run_git_command(["git", "remote", "add", "origin", https])
-    elif remote == "ssh":
-        ssh = f"git@github.com:{username}/{repo_name}.git"
-        run_git_command(["git", "remote", "add", "origin", ssh])
-    run_git_command(["git", "push", "-u", "origin", "main"])
-    print("succsess")
+    try:
+        with console.status("Prosssing"):
+            run_git_command(["git", "init"])
+            run_git_command(["git", "add", "."])
+            run_git_command(["git", "commit", "-m", "'first commit'"])
+            run_git_command(["git", "branch", "-M", "main"])
+            if remote == "https":
+                https = f"https://github.com/{username}/{repo_name}.git"
+                run_git_command(["git", "remote", "add", "origin", https])
+            elif remote == "ssh":
+                ssh = f"git@github.com:{username}/{repo_name}.git"
+                run_git_command(["git", "remote", "add", "origin", ssh])
+            run_git_command(["git", "push", "-u", "origin", "main"])
+        console.print("[bold green]succsess[/bold green]")
+    except KeyboardInterrupt:
+        print("calceld")
 
 
 if __name__ == "__main__":
