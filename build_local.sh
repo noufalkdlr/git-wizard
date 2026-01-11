@@ -9,7 +9,14 @@ rm -rf dist/ dist-packages/ build/
 mkdir -p dist-packages
 
 echo "🔨 Building Binary..."
-pyinstaller --onefile --name gitw src/gitw/main.py
+pyinstaller --onefile \
+  --hidden-import=inquirer \
+  --hidden-import=typer \
+  --hidden-import=rich \
+  --copy-metadata=readchar \
+  --copy-metadata=inquirer \
+  --name gitw \
+  src/gitw/main.py
 
 echo "📦 Packaging DEB..."
 fpm -s dir -t deb \
