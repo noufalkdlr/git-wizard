@@ -1,6 +1,8 @@
 import typer
 import subprocess
 from rich.console import Console
+from rich.panel import Panel
+import inquirer
 
 
 app = typer.Typer(help="Git Wizard (gset) - Simple Git Automation Tool")
@@ -86,42 +88,137 @@ def push():
 @app.command()
 def connect():
     """
-    connect new created repo to local directory
+    Connect a newly created GitHub repository to the current local directory
     """
-    username = None
-    remote = None
 
-    def find_username():
-        result = run_git_command(["gh", "api", "user", "-q", ".login"])
-        return result
+    def get_github_username():
+        try:
+            gh_result = subprocess.run(
+                ["gh", "api", "user", "-q", ".login"],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            if gh_result.returncode == 0:
+                return gh_result.stdout.strip()
+        except FileNotFoundError:
+            message = (
+                "[yellow]⚠️  GitHub CLI is not installed[/yellow]\n"
+                "[dim]Tip: Installing GitHub CLI allows you to skip username and protocol selection[/dim]\n"
+                "[dim]Visit: https://cli.github.com to install[/dim]\n"
+            )
+            console.print(Panel(message, border_style="yellow"))
+            return None
 
-    def find_remote():
-        result = subprocess.run(
-            ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
-        )
-        if result.returncode == 0:
-            return result.stdout.strip()
+        except subprocess.CalledProcessError:
+            message = (
+                "[yellow]⚠️  GitHub CLI is not logged in[/yellow]\n"
+                "[dim]Tip: Logging in to GitHub CLI allows you to skip username and protocol selection[/dim]\n"
+            )
+            console.print(Panel(message, border_style="yellow"))
 
-    if find_username():
-        username = find_username()
-    remote = find_remote()
+            choice = typer.confirm("Do you want to setup Github CLI?")
+            if choice:
+                try:
+                    gh_result = subprocess.run(["gh", "auth", "login"], check=True)
+                    console.print(
+                        "[bold green]✅ Successfully logged in to GitHub CLI[/bold green]"
+                    )
+                    return get_github_username()
+                except subprocess.CalledProcessError as e:
+                    if e.stderr and e.stderr.strip():
+                        console.print(
+                            f"[bold red]Error running command: [/bold red][red]{e.stderr}[/red]"
+                        )
+                        return None
+                    console.print("[yellow]Operation cancelled by user[/yellow]")
+                    return None
+            else:
+                return None
 
-    if not find_username():
+    def get_git_protocol():
+        try:
+            protocol_result = subprocess.run(
+                ["gh", "config", "get", "git_protocol"], capture_output=True, text=True
+            )
+            if protocol_result.returncode == 0:
+                return protocol_result.stdout.strip()
+        except FileNotFoundError:
+            return None
+        except subprocess.CalledProcessError as e:
+            console.print("GitHub CLI is installed but not authenticated")
+            console.print(f"[bold red]{e.stderr}[/bold red]")
+            return None
+
+    protocol = get_git_protocol()
+    if not protocol:
+        questions = [
+            inquirer.List(
+                "protocol",
+                message="Select remote protocol",
+                choices=["ssh", "https"],
+            ),
+        ]
+        answer = inquirer.prompt(questions)
+        if not answer:
+            raise typer.Exit()
+        protocol = answer["protocol"]
+
+    username = get_github_username()
+
+    if not username:
         username = typer.prompt("Enter username")
+
     repo_name = typer.prompt("Enter repo name")
 
-    run_git_command(["git", "init"])
-    run_git_command(["git", "add", "."])
-    run_git_command(["git", "commit", "-m", "first commit"])
-    run_git_command(["git", "branch", "-M", "main"])
-    if remote == "https":
-        https = f"https://github.com/{username}/{repo_name}.git"
-        run_git_command(["git", "remote", "add", "origin", https])
-    elif remote == "ssh":
-        ssh = f"git@github.com:{username}/{repo_name}.git"
-        run_git_command(["git", "remote", "add", "origin", ssh])
-    run_git_command(["git", "push", "-u", "origin", "main"])
-    print("succsess")
+    try:
+        with console.status("[bold green]Initializing repository...[/bold green]"):
+            run_git_command(["git", "init"])
+            run_git_command(["git", "add", "."])
+            try:
+                subprocess.run(
+                    ["git", "commit", "-m", "first commit"],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                )
+            except subprocess.CalledProcessError as e:
+                error_message = e.stderr.strip() if e.stderr else ""
+                output_message = e.stdout.strip() if e.stdout else ""
+
+                if "nothing to commit" in output_message:
+                    console.print("\n[yellow]⚠️  Nothing to commit[/yellow]")
+                    console.print(
+                        "[dim]Directory is empty or files are already committed[/dim]"
+                    )
+                    console.print(
+                        "[dim]Please add some files to the directory first[/dim]"
+                    )
+                    raise typer.Exit(code=1)
+                else:
+                    console.print("\n[bold red]❌ Failed to create commit[/bold red]")
+                    if error_message:
+                        console.print(f"[bold red]{error_message}[/bold red]")
+                        raise typer.Exit(code=1)
+                    if output_message:
+                        console.print(f"[bold red]{output_message}[/bold red]")
+                        raise typer.Exit(code=1)
+
+            run_git_command(["git", "branch", "-M", "main"])
+
+            if protocol == "https":
+                https = f"https://github.com/{username}/{repo_name}.git"
+                run_git_command(["git", "remote", "add", "origin", https])
+            elif protocol == "ssh":
+                ssh = f"git@github.com:{username}/{repo_name}.git"
+                run_git_command(["git", "remote", "add", "origin", ssh])
+
+            run_git_command(["git", "push", "-u", "origin", "main"])
+        console.print(
+            "[bold green]✅ Successfully connected and pushed to GitHub![/bold green]"
+        )
+    except KeyboardInterrupt:
+        console.print("[yellow]Operation cancelled[/yellow]")
 
 
 if __name__ == "__main__":
