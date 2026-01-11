@@ -87,7 +87,7 @@ def push():
 @app.command()
 def connect():
     """
-    onnect a newly created GitHub repository to the current local directory
+    Connect a newly created GitHub repository to the current local directory
     """
 
     def get_github_username():
@@ -108,10 +108,13 @@ def connect():
                 try:
                     gh_result = subprocess.run(["gh", "auth", "login"], check=True)
                     print("Successfully logged in to GitHub CLI")
+                    return get_github_username()
                 except subprocess.CalledProcessError as e:
                     console.print("Error running command", e.stderr)
+                    return None
             else:
                 console.print("Operation cancelled!")
+                return None
 
     def get_git_protocol():
         try:
@@ -123,8 +126,8 @@ def connect():
         except FileNotFoundError:
             return None
         except subprocess.CalledProcessError as e:
-            print("GitHub CLI is installed but not authenticated")
-            print(e.stderr)
+            console.print("GitHub CLI is installed but not authenticated")
+            console.print(e.stderr)
             return None
 
     protocol = get_git_protocol()
@@ -165,7 +168,7 @@ def connect():
             "[bold green]Successfully connected and pushed to GitHub![/bold green]"
         )
     except KeyboardInterrupt:
-        print("Operation cancelled")
+        console.print("Operation cancelled")
 
 
 if __name__ == "__main__":

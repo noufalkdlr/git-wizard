@@ -1,8 +1,16 @@
+blessed==1.25.0
 click==8.3.1
+editor==1.6.6
+-e git+ssh://git@github.com/noufalkdlr/git-wizard.git@32dc324e0c2104ae4de82f43b3f842b11099d85d#egg=git_wizard
+inquirer==3.4.1
 markdown-it-py==4.0.0
 mdurl==0.1.2
 Pygments==2.19.2
+readchar==4.2.1
 rich==14.2.0
+runs==1.2.2
 shellingham==1.5.4
 typer==0.21.1
 typing_extensions==4.15.0
+wcwidth==0.2.14
+xmod==1.8.1
