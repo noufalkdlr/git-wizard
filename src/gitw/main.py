@@ -107,10 +107,14 @@ def connect():
             if choice:
                 try:
                     gh_result = subprocess.run(["gh", "auth", "login"], check=True)
-                    print("Successfully logged in to GitHub CLI")
+                    console.print(
+                        "[bold green]✅ Successfully logged in to GitHub CLI[/bold green]"
+                    )
                     return get_github_username()
                 except subprocess.CalledProcessError as e:
-                    console.print("Error running command", e.stderr)
+                    console.print(
+                        f"[bold red]Error running command:[/bold red] [red]{e.stderr}[/red]"
+                    )
                     return None
             else:
                 console.print("Operation cancelled!")
@@ -127,7 +131,7 @@ def connect():
             return None
         except subprocess.CalledProcessError as e:
             console.print("GitHub CLI is installed but not authenticated")
-            console.print(e.stderr)
+            console.print(f"[bold red]{e.stderr}[/bold red]")
             return None
 
     protocol = get_git_protocol()
@@ -152,7 +156,7 @@ def connect():
     repo_name = typer.prompt("Enter repo name")
 
     try:
-        with console.status("Initializing repository..."):
+        with console.status("[bold green]Initializing repository...[/bold green]"):
             run_git_command(["git", "init"])
             run_git_command(["git", "add", "."])
             run_git_command(["git", "commit", "-m", "first commit"])
@@ -165,7 +169,7 @@ def connect():
                 run_git_command(["git", "remote", "add", "origin", ssh])
             run_git_command(["git", "push", "-u", "origin", "main"])
         console.print(
-            "[bold green]Successfully connected and pushed to GitHub![/bold green]"
+            "[bold green]✅ Successfully connected and pushed to GitHub![/bold green]"
         )
     except KeyboardInterrupt:
         console.print("Operation cancelled")
