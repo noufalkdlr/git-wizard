@@ -28,6 +28,7 @@ Install from the AUR using `yay`:
 ```bash
 yay -S git-wizard
 ```
+> **Note**: This package depends on `python-inquirer`, which is available in the AUR. Using an AUR helper like `yay` or `paru` is recommended to handle dependencies automatically. If you are building manually, please ensure `python-inquirer` is installed first.
 
 ### Debian/Ubuntu (.deb)
 
@@ -85,6 +86,8 @@ Initialize a local repository, create a commit, and push to GitHub in a single c
 ```bash
 gitw connect
 ```
+> 💡 **Pro Tip:** Install [GitHub CLI](https://cli.github.com/) (`gh`) for the best experience. It allows `git-wizard` to automatically detect your GitHub username and preferred protocol (SSH/HTTPS), skipping those prompts!
+
 
 
 ## 📄 License
