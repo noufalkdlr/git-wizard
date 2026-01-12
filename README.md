@@ -80,6 +80,12 @@ Stage all files, commit, and push in one go:
 gitw push
 ```
 
+### 4. Connect Repository
+Initialize a local repository, create a commit, and push to GitHub in a single command. It supports both SSH and HTTPS protocols and integrates with GitHub CLI for seamless authentication.
+```bash
+gitw connect
+```
+
 
 ## 📄 License
 
